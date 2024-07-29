@@ -1,5 +1,5 @@
 const App = () => {
-  return <div>HELLO</div>;
+  return <div class ="title" style= './styles.css'>Budget Buddy</div>;
 };
 
 export default App;
