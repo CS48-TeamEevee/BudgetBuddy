@@ -1,5 +1,17 @@
-const App = () => {
-  return <div class ="title" style= './styles.css'>Budget Buddy</div>;
-};
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import InitialSetup from './components/InitialSetup';
+import InitialReport from './components/InitialReport';
+
+function App() {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<InitialSetup />} />
+                <Route path="/report" element={<InitialReport />} />
+            </Routes>
+        </Router>
+    );
+}
 
 export default App;
