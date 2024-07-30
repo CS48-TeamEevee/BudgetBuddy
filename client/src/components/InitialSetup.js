@@ -7,12 +7,12 @@ import '../styles/InitialSetup.css';
 dotenv.config();
 
 function InitialSetup({ username, password }) {
-    const [estMonthlyIncome, setEstMonthlyIncome] = useState(0);
+    const [month, setMonth] = useState('');
+    const [income, setIncome] = useState(0);
     const [fixedExpenses, setFixedExpenses] = useState({});
     const [variableExpenses, setVariableExpenses] = useState({});
-    const [savingsTarget, setSavingsTarget] = useState(0);
-    const [savingsReturn, setSavingsReturn] = useState(0);
-    const [startingMonth, setStartingMonth] = useState('');
+    const [savingGoal, setSavingGoal] = useState(0);
+    const [investmentReturn, setInvestmentReturn] = useState(0);
 
     const fixedExpenseOptions = ['Rent', 'Mortgage', 'Parking', 'Bills', 'Subscriptions', 'Memberships', 'Custom'];
     const variableExpenseOptions = ['Groceries', 'Entertainment', 'Dining Out', 'Travel', 'Custom'];
@@ -53,31 +53,48 @@ function InitialSetup({ username, password }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const monthlyUpdate = {
+            month,
+            income,
+            expenses: {
+                fixedExpenses,
+                variableExpenses
+            }
+        };
+
         const data = {
-            estMonthlyIncome,
-            fixedExpenses,
-            variableExpenses,
-            savingsTarget,
-            savingsReturn,
-            startingMonth,
             username,
             password,
+            savingGoal,
+            investmentReturn,
+            monthlyUpdates: [monthlyUpdate]
         };
 
         await saveToDatabase(data);
 
         // Navigate to InitialReport component
-        navigate('/initialReport');
+        navigate('/initialReport', { state: data });
     };
 
     return (
         <form onSubmit={handleSubmit} className="form-container">
+
+            <div className="form-group">
+                <label>Current Month/Year (MM/YYYY):</label>
+                <input
+                    type="text"
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    placeholder="MM/YYYY"
+                />
+            </div>
+
             <div className="form-group">
                 <label>Estimated Monthly Income:</label>
                 <input
                     type="number"
-                    value={estMonthlyIncome}
-                    onChange={(e) => setEstMonthlyIncome(Number(e.target.value))}
+                    value={income}
+                    onChange={(e) => setIncome(Number(e.target.value))}
                 />
             </div>
 
@@ -127,28 +144,18 @@ function InitialSetup({ username, password }) {
                     <label>5-Year Savings Target ($):</label>
                     <input
                         type="number"
-                        value={savingsTarget}
-                        onChange={(e) => setSavingsTarget(Number(e.target.value))}
+                        value={savingGoal}
+                        onChange={(e) => setSavingGoal(Number(e.target.value))}
                     />
                 </div>
                 <div className="form-group">
                     <label>Estimated Savings Yield/Investment Return as annualized %:</label>
                     <input
                         type="number"
-                        value={savingsReturn}
-                        onChange={(e) => setSavingsReturn(Number(e.target.value))}
+                        value={investmentReturn}
+                        onChange={(e) => setInvestmentReturn(Number(e.target.value))}
                     />
                 </div>
-            </div>
-
-            <div className="form-group">
-                <label>Starting Month/Year (MM/YYYY):</label>
-                <input
-                    type="text"
-                    value={startingMonth}
-                    onChange={(e) => setStartingMonth(e.target.value)}
-                    placeholder="MM/YYYY"
-                />
             </div>
 
             <button type="submit" className="submit-button">Submit</button>

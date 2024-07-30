@@ -7,14 +7,16 @@ Chart.register(...registerables);
 
 function InitialReport() {
     const location = useLocation();
-    const { estMonthlyIncome, fixedExpenses, variableExpenses, savingsTarget, savingsReturn, startingMonth } = location.state;
+    const { username, password, savingGoal, investmentReturn, monthlyUpdates } = location.state;
+    const { month, income, expenses } = monthlyUpdates[0];
+    const { fixedExpenses, variableExpenses } = expenses;
 
     const [estimatedMonthlySavings, setEstimatedMonthlySavings] = useState(0);
 
     useEffect(() => {
         const totalFixedExpenses = Object.values(fixedExpenses).reduce((acc, val) => acc + Number(val), 0);
         const totalVariableExpenses = Object.values(variableExpenses).reduce((acc, val) => acc + Number(val), 0);
-        const savings = estMonthlyIncome - totalFixedExpenses - totalVariableExpenses;
+        const savings = income - totalFixedExpenses - totalVariableExpenses;
         setEstimatedMonthlySavings(savings);
 
         // Prepare data for Pie Chart
@@ -41,11 +43,11 @@ function InitialReport() {
         const lineCtx = document.getElementById('savingsLineChart').getContext('2d');
         const months = 12 * 5;
         const lineLabels = Array.from({ length: 6 }, (_, i) => {
-            const date = new Date(startingMonth.split('/')[1], startingMonth.split('/')[0] - 1);
+            const date = new Date(month.split('/')[1], month.split('/')[0] - 1);
             date.setFullYear(date.getFullYear() + i);
             return date.toLocaleDateString('en-US', { year: 'numeric' });
         });
-        const lineData = [0, savingsTarget];
+        const lineData = [0, savingGoal];
 
         new Chart(lineCtx, {
             type: 'line',
@@ -76,7 +78,7 @@ function InitialReport() {
                 },
             },
         });
-    }, [estMonthlyIncome, fixedExpenses, variableExpenses, savingsTarget, savingsReturn, startingMonth]);
+    }, [income, fixedExpenses, variableExpenses, savingGoal, investmentReturn, month]);
 
     return (
         <div className="report-container">
@@ -86,6 +88,11 @@ function InitialReport() {
             </div>
             <div className="right-column">
                 <canvas id="savingsLineChart"></canvas>
+            </div>
+            <div className="button-container">
+                <button className="add-monthly-update-button" onClick={handleAddMonthlyUpdate}>
+                    Add Monthly Update
+                </button>
             </div>
         </div>
     );
