@@ -40,21 +40,22 @@ function InitialReport() {
         // Line Chart
         const lineCtx = document.getElementById('savingsLineChart').getContext('2d');
         const months = 12 * 5;
-        const monthlyRate = (1 + savingsReturn / 100) ** (1 / 12) - 1;
-        const savingsData = Array.from({ length: months + 1 }, (_, i) => savings * (1 + monthlyRate) ** i);
-                
+        const lineLabels = Array.from({ length: 6 }, (_, i) => {
+            const date = new Date(startingMonth.split('/')[1], startingMonth.split('/')[0] - 1);
+            date.setFullYear(date.getFullYear() + i);
+            return date.toLocaleDateString('en-US', { year: 'numeric' });
+        });
+        const lineData = [0, savingsTarget];
+
         new Chart(lineCtx, {
             type: 'line',
             data: {
-                labels: Array.from({ length: 6 }, (_, i) => {
-                    const date = new Date(startingMonth.split('/')[1], startingMonth.split('/')[0] - 1);
-                    date.setFullYear(date.getFullYear() + i);
-                    return date.toLocaleDateString('en-US', { year: 'numeric' });
-                }),
+                labels: lineLabels,
                 datasets: [{
-                    label: 'Savings Over Time',
-                    data: savingsData.filter((_, i) => i % 12 === 0),
-                    borderColor: '#36A2EB',
+                    label: 'Savings Progress',
+                    data: lineData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
                     fill: false,
                 }],
             },
@@ -75,7 +76,7 @@ function InitialReport() {
                 },
             },
         });
-    }, [estMonthlyIncome, fixedExpenses, variableExpenses, savingsReturn, startingMonth]);
+    }, [estMonthlyIncome, fixedExpenses, variableExpenses, savingsTarget, savingsReturn, startingMonth]);
 
     return (
         <div className="report-container">
