@@ -3,6 +3,9 @@ const JWT_SECRET = process.env.JWT_SECRET; // Define a secret key for signing JW
 const userController = {}; // Initialize an empty userController object
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel.js');
+const { useEffect } = require('react');
+
+
 
 userController.displayUsers = async (req, res, next) => {
   try {
@@ -35,6 +38,7 @@ userController.createUser = async (req, res, next) => {
     //generate hashed password to securely store data
     const userSalt = await bcrypt.genSalt();
     const hashword = await bcrypt.hash(password, userSalt);
+    
     //store user in database
     User.create({ username: username, password: hashword })
       .then((result) => {
@@ -58,10 +62,12 @@ userController.createUser = async (req, res, next) => {
     });
   }
 };
+
 //FOR TESTING PURPOSES
 userController.deleteUser = async (req, res, next) => {
   const { username } = req.body;
   console.log(req.body);
+
   User.findOneAndDelete({ username: username }).then((result) => {
     //if no user was found with provided input, call global error handler
     if (!result) {
@@ -78,12 +84,13 @@ userController.deleteUser = async (req, res, next) => {
     next();
   });
 };
+
 //FOR TESTING PURPOSES
 userController.getAllUsers = async (req, res, next) => {
   res.locals.user = await User.find({});
   next();
 };
-//TODO - write findone
+
 userController.verifyUser = async (req, res, next) => {
   //destructure req.body for the username and password
   const { username, password } = req.body;
@@ -96,6 +103,7 @@ userController.verifyUser = async (req, res, next) => {
     res.locals.user = correctLogin
       ? 'Successfully logged in'
       : 'Passwords do not match';
+
     //if authenticated, begin authorization JWT step
     return next();
     //if problem exists, send user back to login route
