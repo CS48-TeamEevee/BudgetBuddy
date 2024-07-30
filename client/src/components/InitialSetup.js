@@ -35,21 +35,21 @@ function InitialSetup({ username, password }) {
         setVariableExpenses({ ...variableExpenses, [type]: amount });
     };
 
-    const saveToDatabase = async (data) => {
-        const uri = process.env.MONGODB_URI;
-        const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    // const saveToDatabase = async (data) => {
+    //     const uri = process.env.MONGODB_URI;
+    //     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-        try {
-            await client.connect();
-            const database = client.db('your_database_name');
-            const collection = database.collection('your_collection_name');
-            await collection.insertOne(data);
-        } catch (error) {
-            console.error('Error saving to database:', error);
-        } finally {
-            await client.close();
-        }
-    };
+    //     try {
+    //         await client.connect();
+    //         const database = client.db('your_database_name');
+    //         const collection = database.collection('your_collection_name');
+    //         await collection.insertOne(data);
+    //     } catch (error) {
+    //         console.error('Error saving to database:', error);
+    //     } finally {
+    //         await client.close();
+    //     }
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -70,7 +70,7 @@ function InitialSetup({ username, password }) {
             monthlyUpdates: [monthlyUpdate]
         };
 
-        await saveToDatabase(data);
+        // await saveToDatabase(data);
 
         // Navigate to InitialReport component
         navigate('/initialReport', { state: data });
