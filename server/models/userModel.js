@@ -1,14 +1,27 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const monthlyUpdateSchema = require('./monthlyUpdateModel').schema; // Import the schema definition
 
-const SALT_WORK_FACTOR = 10;
-const bcrypt = require('bcryptjs');
-
-const userSchema = new Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  savingGoal: {
+    type: Number,
+    required: false,
+  },
+  investmentReturn: {
+    type: Number,
+    required: false,
+  },
+  monthlyUpdates: [monthlyUpdateSchema], // Array of MonthlyUpdate schemas
 });
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = { User };
+module.exports = User;
