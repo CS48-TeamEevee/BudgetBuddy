@@ -3,6 +3,7 @@ const JWT_SECRET = process.env.JWT_SECRET; // Define a secret key for signing JW
 const userController = {}; // Initialize an empty userController object
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel.js');
+const { useEffect } = require('react');
 
 userController.createUser = async (req, res, next) => {
   //destructure req.body for the username and password
@@ -74,31 +75,27 @@ userController.getAllUsers = async (req, res, next) => {
   next();
 };
 
-//TODO - write findone 
+
 userController.verifyUser = async (req, res, next) => {
   //destructure req.body for the username and password
   const { username, password } = req.body;
-  //query database for a user by username
-  //get that users password stored in database
 
-  //if user does not exist return null
   try {
-    User.find({}, (err, users) => {
-      if (err) {
-        res.redirect('/login');
-      }
-    });
-
-    const correctLogin = await bcrypt.compare(password, user.password);
+    //query database for a user by username
+    const newUser = await User.findOne({ username: username });
+    //check to see if entered password matches original pre-hashed password
+    const correctLogin = await bcrypt.compare(password, newUser.password);
+    //send result back to frontend
     res.locals.user = correctLogin
       ? 'Successfully logged in'
       : 'Passwords do not match';
 
-    //jwt.sign(user);
+    //if authenticated, begin authorization JWT step  
 
     return next();
+    //if problem exists, send user back to login route
   } catch (err) {
-    res.status(500).send();
+    res.redirect('/login');
   }
 };
 
