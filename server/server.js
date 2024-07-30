@@ -4,11 +4,13 @@ const app = express();
 const PORT = 3000;
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
-const userController = require('./controllers/userController.js');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(bodyParser.json());
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -27,36 +29,50 @@ const connectDB = async () => {
 
 connectDB();
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(bodyParser.json());
+
 app.post('/api/signup', userController.createUser, (req, res) => {
-  console.log("or here");
+  console.log('or here');
   res.status(200).json(res.locals.user);
 });
 
 app.post('/api/login', userController.verifyUser, (req, res) => {
-  console.log(res.locals.user);
   res.status(200).json(res.locals.user);
 });
 
 app.get('/api/users', userController.getAllUsers, (req, res) => {
-  console.log("are we here");
+  console.log('are we here');
   res.status(200).json(res.locals.user);
-})
+});
 
 app.delete('/api/users', userController.deleteUser, (req, res) => {
-  console.log("are we here");
+  console.log('are we here');
   res.status(200).json(res.locals.user);
-})
-
+});
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../dist/bundle.js'));
 });
 
+// Unknown route handler
+app.use((req, res) => res.sendStatus(404));
+
+// Global error handler
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ error: err });
+  const defaultErr = {
+    log: 'Express error handler caught unknown middleware error',
+    status: 500,
+    message: { err: 'An error occurred' },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(errorObj.log);
+  return res.status(errorObj.status).json(errorObj.message);
 });
 
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app;

@@ -3,7 +3,25 @@ const JWT_SECRET = process.env.JWT_SECRET; // Define a secret key for signing JW
 const userController = {}; // Initialize an empty userController object
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel.js');
+<<<<<<< HEAD
 const { useEffect } = require('react');
+=======
+
+userController.displayUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    console.log(users);
+    res.locals.users = users;
+    return next();
+  } catch (err) {
+    return next({
+      log: `userController.displayUsers: Error: ${err}`,
+      status: 500,
+      message: { err: 'Error displayUsers user' },
+    });
+  }
+};
+>>>>>>> dev
 
 userController.createUser = async (req, res, next) => {
   //destructure req.body for the username and password
@@ -17,12 +35,18 @@ userController.createUser = async (req, res, next) => {
       message: { err: 'Did not receive username and password' },
     });
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
   try {
     //generate hashed password to securely store data
     const userSalt = await bcrypt.genSalt();
     const hashword = await bcrypt.hash(password, userSalt);
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
     //store user in database
     User.create({ username: username, password: hashword })
       .then((result) => {
@@ -46,12 +70,18 @@ userController.createUser = async (req, res, next) => {
     });
   }
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
 //FOR TESTING PURPOSES
 userController.deleteUser = async (req, res, next) => {
   const { username } = req.body;
   console.log(req.body);
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
   User.findOneAndDelete({ username: username }).then((result) => {
     //if no user was found with provided input, call global error handler
     if (!result) {
@@ -68,18 +98,28 @@ userController.deleteUser = async (req, res, next) => {
     next();
   });
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
 //FOR TESTING PURPOSES
 userController.getAllUsers = async (req, res, next) => {
   res.locals.user = await User.find({});
   next();
 };
+<<<<<<< HEAD
 
 
 userController.verifyUser = async (req, res, next) => {
   //destructure req.body for the username and password
   const { username, password } = req.body;
 
+=======
+//TODO - write findone
+userController.verifyUser = async (req, res, next) => {
+  //destructure req.body for the username and password
+  const { username, password } = req.body;
+>>>>>>> dev
   try {
     //query database for a user by username
     const newUser = await User.findOne({ username: username });
@@ -89,9 +129,13 @@ userController.verifyUser = async (req, res, next) => {
     res.locals.user = correctLogin
       ? 'Successfully logged in'
       : 'Passwords do not match';
+<<<<<<< HEAD
 
     //if authenticated, begin authorization JWT step  
 
+=======
+    //if authenticated, begin authorization JWT step
+>>>>>>> dev
     return next();
     //if problem exists, send user back to login route
   } catch (err) {
