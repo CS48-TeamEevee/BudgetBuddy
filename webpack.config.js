@@ -8,7 +8,7 @@ const dotenv = require('dotenv').config({
 module.exports = {
   // Entry point that indicates where
   // should the webpack starts bundling
-  entry: './client/src/index.js',
+  entry: [ 'core-js/stable', 'regenerator-runtime/runtime',  './client/src/index.js'],
   mode: 'development',
   plugins: [
     new HtmlWebpackPlugin({
@@ -27,7 +27,7 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           presets: [
-            '@babel/env',
+            ["@babel/preset-env", { "useBuiltIns": "entry", "corejs": 3 }],
             ['@babel/preset-react', { runtime: 'automatic' }],
           ],
         },
