@@ -90,13 +90,20 @@ function Report() {
         const lineCtx = document
           .getElementById('savingsLineChart')
           .getContext('2d');
-        const months = 12 * 5;
-        const lineLabels = Array.from({ length: 6 }, (_, i) => {
-          const date = new Date(month.split('/')[1], month.split('/')[0] - 1);
-          date.setFullYear(date.getFullYear() + i);
-          return date.toLocaleDateString('en-US', { year: 'numeric' });
-        });
-        const lineData = [0, savingGoal];
+        // const months = 12 * 5;
+        // const lineLabels = Array.from({ length: 6 }, (_, i) => {
+        //   const date = new Date(month.split('/')[1], month.split('/')[0] - 1);
+        //   date.setFullYear(date.getFullYear() + i);
+        //   return date.toLocaleDateString('en-US', { year: 'numeric' });
+        // });
+        // const lineData = [0, savingGoal];
+
+        const year = month.split('/')[1];
+        // const lineData = [0, savingGoal];
+        const years = [];
+        for (let i = 0; i < 6; i++) {
+          years.push(year + i);
+        }
 
         // Destroy previous line chart instance if it exists
         if (lineChartRef.current) {
@@ -107,11 +114,14 @@ function Report() {
         lineChartRef.current = new Chart(lineCtx, {
           type: 'line',
           data: {
-            labels: lineLabels,
+            labels: years,
             datasets: [
               {
-                label: 'Savings Progress',
-                data: lineData,
+                label: 'Intended Savings Growth',
+                data: [
+                  {x: years[0], y: 0},
+                  {x: years[5], y: savingGoal},
+                ],
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,
                 fill: false,
@@ -149,11 +159,11 @@ function Report() {
       </div>
       <div className='right-column'>
         <canvas id='savingsLineChart'></canvas>
-      </div>
-      <div className='button-container'>
+        <div className='button-container'>
         <button className='add-monthly-update-button'>
           Add Monthly Update
         </button>
+      </div>
       </div>
     </div>
   );
