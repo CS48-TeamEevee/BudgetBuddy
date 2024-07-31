@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation } from 'react-router-dom';
+
 import '../styles/InitialSetup.css';
 
-function InitialSetup({ username, password }) {
+function InitialSetup() {
   const [month, setMonth] = useState('');
   const [income, setIncome] = useState();
   const [fixedExpenses, setFixedExpenses] = useState({});
   const [variableExpenses, setVariableExpenses] = useState({});
   const [savingGoal, setSavingGoal] = useState();
   const [investmentReturn, setInvestmentReturn] = useState();
+  const location = useLocation();
+  const { state } = location;
+  const { username } = state;
+  const navigate = useNavigate();
 
+  console.log("reached setup component with ", username);
+  
   const fixedExpenseOptions = [
     'Rent',
     'Mortgage',
@@ -26,8 +33,7 @@ function InitialSetup({ username, password }) {
     'Pets',
   ];
 
-  const navigate = useNavigate();
-
+  
   const handleAddFixedExpense = (expense) => {
     setFixedExpenses({ ...fixedExpenses, [expense]: '' });
   };

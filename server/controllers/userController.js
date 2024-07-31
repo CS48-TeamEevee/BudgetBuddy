@@ -94,6 +94,9 @@ userController.getAllUsers = async (req, res, next) => {
 userController.verifyUser = async (req, res, next) => {
   //destructure req.body for the username and password
   const { username, password } = req.body;
+  console.log(req);
+  console.log('reached endpoint');
+  console.log(username, password);
   try {
     //query database for a user by username
     const newUser = await User.findOne({ username: username });
@@ -101,13 +104,13 @@ userController.verifyUser = async (req, res, next) => {
     const correctLogin = await bcrypt.compare(password, newUser.password);
     //send result back to frontend
     res.locals.user = correctLogin
-      ? 'Successfully logged in'
-      : 'Passwords do not match';
+      ? {username : username, result: 'success'}
+      : {username : username, result: 'failed'};
 
-    if(correctLogin) {
-      const currentUser = {name: username};
-      jwt.sign(currentUser, process.env.JWT_SECRET);
-    }  
+    // if(correctLogin) {
+    //   const currentUser = {name: username};
+    //   jwt.sign(currentUser, process.env.JWT_SECRET);
+    // }  
     
 
     return next();
