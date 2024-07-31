@@ -19,14 +19,14 @@ const SignupForm = () => {
       [name]: value,
     });
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match');
       return;
     }
-
+  
     try {
       const response = await fetch('http://localhost:3000/api/signup', {
         method: 'POST',
@@ -38,11 +38,11 @@ const SignupForm = () => {
           password: formData.password,
         }),
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         console.log('User created successfully', data);
-        navigate('/setup'); // Navigate to the InitialSetup component
+        navigate('/setup', { state: { user: data } }); // Pass data to the InitialSetup component
       } else {
         console.error('Error creating user', data);
       }

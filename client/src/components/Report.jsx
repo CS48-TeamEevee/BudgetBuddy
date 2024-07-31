@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Chart, registerables } from 'chart.js';
 import '../styles/Report.css';
@@ -13,6 +13,8 @@ function Report() {
   const { fixedExpenses, variableExpenses } = expenses;
 
   const [estimatedMonthlySavings, setEstimatedMonthlySavings] = useState(0);
+  const pieChartRef = useRef(null);
+  const lineChartRef = useRef(null);
 
   useEffect(() => {
     const totalFixedExpenses = Object.values(fixedExpenses).reduce(
@@ -26,15 +28,23 @@ function Report() {
     const savings = income - totalFixedExpenses - totalVariableExpenses;
     setEstimatedMonthlySavings(savings);
 
+    // Filter out null or undefined values from fixedExpenses and variableExpenses
+    const filteredFixedExpenses = Object.entries(fixedExpenses).filter(
+      ([, value]) => value != null
+    );
+    const filteredVariableExpenses = Object.entries(variableExpenses).filter(
+      ([, value]) => value != null
+    );
+
     // Prepare data for Pie Chart
     const pieLabels = [
-      ...Object.keys(fixedExpenses),
-      ...Object.keys(variableExpenses),
+      ...filteredFixedExpenses.map(([key]) => key),
+      ...filteredVariableExpenses.map(([key]) => key),
       'Estimated Monthly Savings',
     ];
     const pieData = [
-      ...Object.values(fixedExpenses).map(Number),
-      ...Object.values(variableExpenses).map(Number),
+      ...filteredFixedExpenses.map(([, value]) => Number(value)),
+      ...filteredVariableExpenses.map(([, value]) => Number(value)),
       savings,
     ];
 
@@ -42,9 +52,15 @@ function Report() {
     const pieColors = pieLabels.map(
       (_, index) => `hsl(${(index * 360) / pieLabels.length}, 70%, 50%)`
     );
-    // Pie Chart
+
+    // Destroy previous pie chart instance if it exists
+    if (pieChartRef.current) {
+      pieChartRef.current.destroy();
+    }
+
+    // Create new pie chart instance
     const pieCtx = document.getElementById('expensesPieChart').getContext('2d');
-    new Chart(pieCtx, {
+    pieChartRef.current = new Chart(pieCtx, {
       type: 'pie',
       data: {
         labels: pieLabels,
@@ -69,7 +85,13 @@ function Report() {
     });
     const lineData = [0, savingGoal];
 
-    new Chart(lineCtx, {
+    // Destroy previous line chart instance if it exists
+    if (lineChartRef.current) {
+      lineChartRef.current.destroy();
+    }
+
+    // Create new line chart instance
+    lineChartRef.current = new Chart(lineCtx, {
       type: 'line',
       data: {
         labels: lineLabels,
@@ -121,9 +143,6 @@ function Report() {
         <canvas id='savingsLineChart'></canvas>
       </div>
       <div className='button-container'>
-        {/* <button className="add-monthly-update-button" onClick={handleAddMonthlyUpdate}>
-                    Add Monthly Update
-                </button> */}
         <button className='add-monthly-update-button'>
           Add Monthly Update
         </button>
