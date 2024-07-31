@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import dotenv from 'dotenv';
-// import '../styles/InitialSetup.css';
-
-//dotenv.config();
+import '../styles/InitialSetup.css';
 
 function InitialSetup({ username, password }) {
   const [month, setMonth] = useState('');
