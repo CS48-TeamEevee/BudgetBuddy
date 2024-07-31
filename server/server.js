@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const userController = require('./controllers/userController.js');
+const MonthlyUpdate = require('./models/monthlyUpdateModel.js'); // Import the model
+const User = require('./models/userModel.js'); // Import the user model
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -30,9 +32,30 @@ const connectDB = async () => {
 
 connectDB();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(bodyParser.json());
+app.post('/save', async (req, res) => {
+  const { username, password, savingGoal, investmentReturn, monthlyUpdates } = req.body;
+
+  try {
+    // Find the user by username and password
+    let user = await User.findOne({ username, password });
+
+    if (!user) {
+      // If user does not exist, create a new user
+      user = new User({ username, password, savingGoal, investmentReturn, monthlyUpdates });
+    } else {
+      // If user exists, update the user's data
+      user.savingGoal = savingGoal;
+      user.investmentReturn = investmentReturn;
+      user.monthlyUpdates.push(...monthlyUpdates);
+    }
+
+    await user.save();
+    res.status(200).send('Data saved successfully');
+  } catch (error) {
+    console.error('Error saving to database:', error);
+    res.status(500).send('Error saving to database');
+  }
+});
 
 app.post('/api/signup', userController.createUser, (req, res) => {
   console.log('or here');

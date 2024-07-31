@@ -16,8 +16,8 @@ function MonthlyUpdate() {
     const [fixedExpenses, setFixedExpenses] = useState(lastMonthlyUpdate.expenses.fixedExpenses);
     const [variableExpenses, setVariableExpenses] = useState(lastMonthlyUpdate.expenses.variableExpenses);
 
-    const fixedExpenseOptions = ['Rent', 'Mortgage', 'Parking', 'Bills', 'Subscriptions', 'Memberships', 'Custom'];
-    const variableExpenseOptions = ['Groceries', 'Entertainment', 'Dining Out', 'Travel', 'Custom'];
+    const fixedExpenseOptions = ['Rent', 'Mortgage', 'Parking', 'Bills', 'Subscriptions', 'Memberships'];
+    const variableExpenseOptions = ['Groceries', 'Entertainment', 'Dining Out', 'Travel', 'Pets'];
 
     const handleFixedExpenseChange = (type, amount) => {
         setFixedExpenses({ ...fixedExpenses, [type]: amount });

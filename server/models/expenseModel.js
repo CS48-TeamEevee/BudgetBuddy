@@ -8,14 +8,13 @@ const expensesSchema = new mongoose.Schema({
     Bills: Number,
     Memberships: Number,
     Subscriptions: Number,
-    Custom: Number,
   },
   variableExpenses: {
     Groceries: Number,
     Entertainment: Number,
     DiningOut: Number,
     Travel: Number,
-    Custom: Number,
+    Pets: Number,
   },
 });
 
