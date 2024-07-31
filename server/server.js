@@ -51,7 +51,7 @@ app.patch('/api/initialSetup', setupController.saveInitialSetup, (req, res) => {
   res.status(200).json(res.locals.user);
 });
 
-app.get('/api/users', userController.getAllUsers, (req, res) => {
+app.get('/api/users/:username', userController.getOneUser, (req, res) => {
   console.log('are we here');
   res.status(200).json(res.locals.user);
 });

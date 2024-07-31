@@ -66,7 +66,6 @@ userController.createUser = async (req, res, next) => {
 //FOR TESTING PURPOSES
 userController.deleteUser = async (req, res, next) => {
   const { username } = req.body;
-  console.log(req.body);
 
   User.findOneAndDelete({ username: username }).then((result) => {
     //if no user was found with provided input, call global error handler
@@ -86,17 +85,17 @@ userController.deleteUser = async (req, res, next) => {
 };
 
 //FOR TESTING PURPOSES
-userController.getAllUsers = async (req, res, next) => {
-  res.locals.user = await User.find({});
+userController.getOneUser = async (req, res, next) => {
+  const {username} = req.params;
+  console.log(username);
+  res.locals.user = await User.findOne({username: username });
+  console.log(res.locals.user);
   next();
 };
 
 userController.verifyUser = async (req, res, next) => {
   //destructure req.body for the username and password
   const { username, password } = req.body;
-  console.log(req);
-  console.log('reached endpoint');
-  console.log(username, password);
   try {
     //query database for a user by username
     const newUser = await User.findOne({ username: username });

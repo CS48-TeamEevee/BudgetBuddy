@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import '../styles/LoginSigninStyles.css';
 import { useNavigate } from 'react-router-dom';
 
-
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     username: '',
@@ -34,8 +33,8 @@ const LoginForm = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log('returned from verifylogin middleware:', data);
-        if(data.result === 'success') {
-          navigate('/setup', {state: {username : data.username}})
+        if (data.result === 'success') {
+          navigate('/report', { state: { username: data.username } });
         }
         //navigate
       })
