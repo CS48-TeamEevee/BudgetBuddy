@@ -42,7 +42,7 @@ const SignupForm = () => {
       const data = await response.json();
       if (response.ok) {
         console.log('User created successfully', data);
-        navigate('/setup', { state: { user: data } }); // Pass data to the InitialSetup component
+        navigate('/setup', { state: { username: data.username } }); // Pass data to the InitialSetup component
       } else {
         console.error('Error creating user', data);
       }

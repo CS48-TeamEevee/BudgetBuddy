@@ -7,129 +7,137 @@ Chart.register(...registerables);
 
 function Report() {
   const location = useLocation();
-  const { username, password, savingGoal, investmentReturn, monthlyUpdates } =
-    location.state;
-  const { month, income, expenses } = monthlyUpdates[0];
-  const { fixedExpenses, variableExpenses } = expenses;
+  const { username } = location.state;
 
   const [estimatedMonthlySavings, setEstimatedMonthlySavings] = useState(0);
   const pieChartRef = useRef(null);
   const lineChartRef = useRef(null);
 
   useEffect(() => {
-    const totalFixedExpenses = Object.values(fixedExpenses).reduce(
-      (acc, val) => acc + Number(val),
-      0
-    );
-    const totalVariableExpenses = Object.values(variableExpenses).reduce(
-      (acc, val) => acc + Number(val),
-      0
-    );
-    const savings = income - totalFixedExpenses - totalVariableExpenses;
-    setEstimatedMonthlySavings(savings);
+    console.log('are we in useeffect');
 
-    // Filter out null or undefined values from fixedExpenses and variableExpenses
-    const filteredFixedExpenses = Object.entries(fixedExpenses).filter(
-      ([, value]) => value != null
-    );
-    const filteredVariableExpenses = Object.entries(variableExpenses).filter(
-      ([, value]) => value != null
-    );
-
-    // Prepare data for Pie Chart
-    const pieLabels = [
-      ...filteredFixedExpenses.map(([key]) => key),
-      ...filteredVariableExpenses.map(([key]) => key),
-      'Estimated Monthly Savings',
-    ];
-    const pieData = [
-      ...filteredFixedExpenses.map(([, value]) => Number(value)),
-      ...filteredVariableExpenses.map(([, value]) => Number(value)),
-      savings,
-    ];
-
-    // Generate unique colors for each piece
-    const pieColors = pieLabels.map(
-      (_, index) => `hsl(${(index * 360) / pieLabels.length}, 70%, 50%)`
-    );
-
-    // Destroy previous pie chart instance if it exists
-    if (pieChartRef.current) {
-      pieChartRef.current.destroy();
-    }
-
-    // Create new pie chart instance
-    const pieCtx = document.getElementById('expensesPieChart').getContext('2d');
-    pieChartRef.current = new Chart(pieCtx, {
-      type: 'pie',
-      data: {
-        labels: pieLabels,
-        datasets: [
-          {
-            data: pieData,
-            backgroundColor: pieColors,
-          },
-        ],
+    const apiCall = `http://localhost:3000/api/users/${username}`;
+    fetch(apiCall, {
+      method: 'GET', // Changed from POST to PATCH
+      headers: {
+        'Content-Type': 'application/json',
       },
-    });
+    }).then((result) =>
+      result.json().then((user) => {
+        console.log(user);
+        const { savingGoal, investmentReturn, monthlyUpdates } = user;
+        const { month, income, expenses } = monthlyUpdates[0];
+        const { fixedExpenses, variableExpenses } = expenses;
+        const totalFixedExpenses = Object.values(fixedExpenses).reduce(
+          (acc, val) => acc + Number(val),
+          0
+        );
+        const totalVariableExpenses = Object.values(variableExpenses).reduce(
+          (acc, val) => acc + Number(val),
+          0
+        );
+        const savings = income - totalFixedExpenses - totalVariableExpenses;
+        setEstimatedMonthlySavings(savings);
 
-    // Line Chart
-    const lineCtx = document
-      .getElementById('savingsLineChart')
-      .getContext('2d');
-    const months = 12 * 5;
-    const lineLabels = Array.from({ length: 6 }, (_, i) => {
-      const date = new Date(month.split('/')[1], month.split('/')[0] - 1);
-      date.setFullYear(date.getFullYear() + i);
-      return date.toLocaleDateString('en-US', { year: 'numeric' });
-    });
-    const lineData = [0, savingGoal];
+        // Filter out null or undefined values from fixedExpenses and variableExpenses
+        const filteredFixedExpenses = Object.entries(fixedExpenses).filter(
+          ([, value]) => value != null
+        );
+        const filteredVariableExpenses = Object.entries(
+          variableExpenses
+        ).filter(([, value]) => value != null);
 
-    // Destroy previous line chart instance if it exists
-    if (lineChartRef.current) {
-      lineChartRef.current.destroy();
-    }
+        // Prepare data for Pie Chart
+        const pieLabels = [
+          ...filteredFixedExpenses.map(([key]) => key),
+          ...filteredVariableExpenses.map(([key]) => key),
+          'Estimated Monthly Savings',
+        ];
+        const pieData = [
+          ...filteredFixedExpenses.map(([, value]) => Number(value)),
+          ...filteredVariableExpenses.map(([, value]) => Number(value)),
+          savings,
+        ];
 
-    // Create new line chart instance
-    lineChartRef.current = new Chart(lineCtx, {
-      type: 'line',
-      data: {
-        labels: lineLabels,
-        datasets: [
-          {
-            label: 'Savings Progress',
-            data: lineData,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2,
-            fill: false,
+        // Generate unique colors for each piece
+        const pieColors = pieLabels.map(
+          (_, index) => `hsl(${(index * 360) / pieLabels.length}, 70%, 50%)`
+        );
+
+        // Destroy previous pie chart instance if it exists
+        if (pieChartRef.current) {
+          pieChartRef.current.destroy();
+        }
+
+        // Create new pie chart instance
+        const pieCtx = document
+          .getElementById('expensesPieChart')
+          .getContext('2d');
+        pieChartRef.current = new Chart(pieCtx, {
+          type: 'pie',
+          data: {
+            labels: pieLabels,
+            datasets: [
+              {
+                data: pieData,
+                backgroundColor: pieColors,
+              },
+            ],
           },
-        ],
-      },
-      options: {
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Year',
+        });
+
+        // Line Chart
+        const lineCtx = document
+          .getElementById('savingsLineChart')
+          .getContext('2d');
+        const months = 12 * 5;
+        const lineLabels = Array.from({ length: 6 }, (_, i) => {
+          const date = new Date(month.split('/')[1], month.split('/')[0] - 1);
+          date.setFullYear(date.getFullYear() + i);
+          return date.toLocaleDateString('en-US', { year: 'numeric' });
+        });
+        const lineData = [0, savingGoal];
+
+        // Destroy previous line chart instance if it exists
+        if (lineChartRef.current) {
+          lineChartRef.current.destroy();
+        }
+
+        // Create new line chart instance
+        lineChartRef.current = new Chart(lineCtx, {
+          type: 'line',
+          data: {
+            labels: lineLabels,
+            datasets: [
+              {
+                label: 'Savings Progress',
+                data: lineData,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Year',
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Amount Saved ($)',
+                },
+              },
             },
           },
-          y: {
-            title: {
-              display: true,
-              text: 'Amount Saved ($)',
-            },
-          },
-        },
-      },
-    });
-  }, [
-    income,
-    fixedExpenses,
-    variableExpenses,
-    savingGoal,
-    investmentReturn,
-    month,
-  ]);
+        });
+      })
+    );
+  }, [username]);
 
   return (
     <div className='report-container'>
