@@ -4,11 +4,11 @@ import '../styles/InitialSetup.css';
 
 function InitialSetup({ username, password }) {
   const [month, setMonth] = useState('');
-  const [income, setIncome] = useState(0);
+  const [income, setIncome] = useState();
   const [fixedExpenses, setFixedExpenses] = useState({});
   const [variableExpenses, setVariableExpenses] = useState({});
-  const [savingGoal, setSavingGoal] = useState(0);
-  const [investmentReturn, setInvestmentReturn] = useState(0);
+  const [savingGoal, setSavingGoal] = useState();
+  const [investmentReturn, setInvestmentReturn] = useState();
 
   const fixedExpenseOptions = [
     'Rent',
@@ -17,14 +17,13 @@ function InitialSetup({ username, password }) {
     'Bills',
     'Subscriptions',
     'Memberships',
-    'Custom',
   ];
   const variableExpenseOptions = [
     'Groceries',
     'Entertainment',
     'Dining Out',
     'Travel',
-    'Custom',
+    'Pets',
   ];
 
   const navigate = useNavigate();
@@ -45,22 +44,6 @@ function InitialSetup({ username, password }) {
     setVariableExpenses({ ...variableExpenses, [type]: amount });
   };
 
-  // const saveToDatabase = async (data) => {
-  //     const uri = process.env.MONGODB_URI;
-  //     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-  //     try {
-  //         await client.connect();
-  //         const database = client.db('your_database_name');
-  //         const collection = database.collection('your_collection_name');
-  //         await collection.insertOne(data);
-  //     } catch (error) {
-  //         console.error('Error saving to database:', error);
-  //     } finally {
-  //         await client.close();
-  //     }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const monthlyUpdate = {
@@ -71,7 +54,7 @@ function InitialSetup({ username, password }) {
         variableExpenses,
       },
     };
-
+  
     const data = {
       username,
       password,
@@ -79,11 +62,27 @@ function InitialSetup({ username, password }) {
       investmentReturn,
       monthlyUpdates: [monthlyUpdate],
     };
-
-    // await saveToDatabase(data);
-
-    // Navigate to InitialReport component
-    navigate('/initialReport', { state: data });
+  
+    try {
+      const response = await fetch('http://localhost:3000/api/initial-setup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to save initial setup data');
+      }
+  
+      const result = await response.json();
+  
+      // Navigate to InitialReport component
+      navigate('/report', { state: result });
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (

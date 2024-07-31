@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Chart, registerables } from 'chart.js';
-import '../styles/InitialReport.css';
+import '../styles/Report.css';
 
 Chart.register(...registerables);
 
-function InitialReport() {
+function Report() {
   const location = useLocation();
   const { username, password, savingGoal, investmentReturn, monthlyUpdates } =
     location.state;
@@ -132,4 +132,4 @@ function InitialReport() {
   );
 }
 
-export default InitialReport;
+export default Report;

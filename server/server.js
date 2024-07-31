@@ -8,6 +8,8 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const userController = require('./controllers/userController.js');
+const setupController = require('./controllers/setupController.js');
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -30,6 +32,7 @@ const connectDB = async () => {
 
 connectDB();
 
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.json());
@@ -40,6 +43,10 @@ app.post('/api/signup', userController.createUser, (req, res) => {
 });
 
 app.post('/api/login', userController.verifyUser, (req, res) => {
+  res.status(200).json(res.locals.user);
+});
+
+app.post('/api/initialSetup', setupController.saveInitialSetup, (req, res) => {
   res.status(200).json(res.locals.user);
 });
 

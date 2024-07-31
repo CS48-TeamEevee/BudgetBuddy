@@ -3,7 +3,7 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import SignupForm from './components/SignupForm.jsx';
 import LoginForm from './components/LoginForm.jsx';
 import InitialSetup from './components/InitialSetup.jsx';
-import Report from './components/InitialReport.jsx';
+import Report from './components/Report.jsx';
 
 const App = () => {
   return (

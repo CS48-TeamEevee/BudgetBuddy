@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/LoginSigninStyles.css';
 
-const signupForm = () => {
-  //initialize the fields to be blank
+const SignupForm = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -10,7 +10,8 @@ const signupForm = () => {
     confirmPassword: '',
   });
 
-  //handle changes reflecting state changes
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -19,10 +20,35 @@ const signupForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add form validation and submission logic here
-    console.log('Form submitted', formData);
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log('User created successfully', data);
+        navigate('/setup'); // Navigate to the InitialSetup component
+      } else {
+        console.error('Error creating user', data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -70,4 +96,4 @@ const signupForm = () => {
   );
 };
 
-export default signupForm;
+export default SignupForm;
