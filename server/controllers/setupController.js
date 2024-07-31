@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const User = require('../models/userModel'); // Adjust the path to your User model
 
-const saveInitialSetup = async (req, res, next) => {
+const setupController = {};
+
+setupController.saveInitialSetup = async (req, res, next) => {
   try {
     const { username, password, savingGoal, investmentReturn, monthlyUpdates } = req.body;
 
@@ -30,4 +32,4 @@ const saveInitialSetup = async (req, res, next) => {
   }
 };
 
-module.exports = { saveInitialSetup };
+module.exports = setupController;

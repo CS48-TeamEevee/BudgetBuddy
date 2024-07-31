@@ -43,7 +43,7 @@ function MonthlyUpdate() {
         // updateUserMonthlyUpdates(username, newMonthlyUpdate);
 
         // Navigate back to the InitialReport or another appropriate page
-        navigate('/initial-report', { state: { username, monthlyUpdates: [...monthlyUpdates, newMonthlyUpdate] } });
+        navigate('/report', { state: { username, monthlyUpdates: [...monthlyUpdates, newMonthlyUpdate] } });
     };
 
     return (

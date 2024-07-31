@@ -64,7 +64,8 @@ function InitialSetup({ username, password }) {
     };
   
     try {
-      const response = await fetch('http://localhost:3000/api/initial-setup', {
+      console.log("in try block");
+      const response = await fetch('http://localhost:3000/api/initialSetup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +82,7 @@ function InitialSetup({ username, password }) {
       // Navigate to InitialReport component
       navigate('/report', { state: result });
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error in steup post req:', error);
     }
   };
 
