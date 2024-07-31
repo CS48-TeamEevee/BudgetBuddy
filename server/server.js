@@ -46,7 +46,7 @@ app.post('/api/login', userController.verifyUser, (req, res) => {
   res.status(200).json(res.locals.user);
 });
 
-app.post('/api/initialSetup', setupController.saveInitialSetup, (req, res) => {
+app.patch('/api/initialSetup', setupController.saveInitialSetup, (req, res) => {
   res.status(200).json(res.locals.user);
 });
 

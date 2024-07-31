@@ -5,9 +5,11 @@ const setupController = {};
 
 setupController.saveInitialSetup = async (req, res, next) => {
   try {
-    const { username, password, savingGoal, investmentReturn, monthlyUpdates } = req.body;
+    const { username, savingGoal, investmentReturn, monthlyUpdates } = req.body;
+    console.log("in saveInitialSetup middleware; monthlyUpdates:", monthlyUpdates);
+    console.log("fixedExpenses:", monthlyUpdates[0].expenses.fixedExpenses);
 
-    // Find the user by username and password
+    // Find the user by username
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -22,6 +24,8 @@ setupController.saveInitialSetup = async (req, res, next) => {
     await user.save();
 
     res.locals.user = user;
+    console.log("res.locals.user:", user);
+    console.log("fixed expenses from res.locals.user:", user.monthlyUpdates[0].expenses.fixedExpenses);
     return next();
   } catch (err) {
     return next({

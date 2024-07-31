@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const expensesSchema = new mongoose.Schema({
   fixedExpenses: {
-    RTCCertificateent: Number,
+    Rent: Number,
     Mortgage: Number,
     Parking: Number,
     Bills: Number,

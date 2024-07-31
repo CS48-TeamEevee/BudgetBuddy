@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import '../styles/InitialSetup.css';
 
-function InitialSetup({ username, password }) {
+function InitialSetup() {
+  const location = useLocation();
+  const { user } = location.state || {}; // Access the passed data
+  const username = user.username;
+
   const [month, setMonth] = useState('');
   const [income, setIncome] = useState();
   const [fixedExpenses, setFixedExpenses] = useState({});
@@ -57,16 +62,14 @@ function InitialSetup({ username, password }) {
   
     const data = {
       username,
-      password,
       savingGoal,
       investmentReturn,
       monthlyUpdates: [monthlyUpdate],
     };
   
     try {
-      console.log("in try block");
       const response = await fetch('http://localhost:3000/api/initialSetup', {
-        method: 'POST',
+        method: 'PATCH', // Changed from POST to PATCH
         headers: {
           'Content-Type': 'application/json',
         },
@@ -74,15 +77,16 @@ function InitialSetup({ username, password }) {
       });
   
       if (!response.ok) {
-        throw new Error('Failed to save initial setup data');
+        throw new Error('Failed to update initial setup data');
       }
   
       const result = await response.json();
+      console.log('response from initial setup:', result);
   
       // Navigate to InitialReport component
       navigate('/report', { state: result });
     } catch (error) {
-      console.error('Error in steup post req:', error);
+      console.error('Error in setup patch req:', error);
     }
   };
 
