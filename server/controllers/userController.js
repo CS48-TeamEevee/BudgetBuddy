@@ -104,12 +104,21 @@ userController.verifyUser = async (req, res, next) => {
       ? 'Successfully logged in'
       : 'Passwords do not match';
 
-    //if authenticated, begin authorization JWT step
+    if(correctLogin) {
+      const currentUser = {name: username};
+      jwt.sign(currentUser, process.env.JWT_SECRET);
+    }  
+    
+
     return next();
     //if problem exists, send user back to login route
   } catch (err) {
     res.redirect('/login');
   }
 };
+
+
+
+
 
 module.exports = userController;
