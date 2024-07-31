@@ -43,6 +43,7 @@ app.post('/api/signup', userController.createUser, (req, res) => {
 });
 
 app.post('/api/login', userController.verifyUser, (req, res) => {
+  console.log("exited middleware");
   res.status(200).json(res.locals.user);
 });
 

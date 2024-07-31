@@ -8,7 +8,6 @@ import Report from './components/Report.jsx';
 const App = () => {
   return (
     <>
-      <div>Hello</div>
       <div className='App'>
         <BrowserRouter>
           <Routes>
